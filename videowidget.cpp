@@ -95,9 +95,9 @@ void VideoWidget::openFile(const QString &path)
 
     /* Integrate the video in the interface */
 #if defined(Q_OS_UNIX)
-    libvlc_media_player_set_xwindow(vlcPlayer, videoWidget->winId());
+    libvlc_media_player_set_xwindow(_vlcPlayer, _videoWidget->winId());
 #elif defined(Q_OS_WIN)
-    // libvlc_media_player_set_hwnd(vlcPlayer, videoWidget->winId());
+    // libvlc_media_player_set_hwnd(_vlcPlayer, _videoWidget->winId());
 #endif
 
     /* And start playback */
