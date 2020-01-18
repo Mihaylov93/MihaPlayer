@@ -1,18 +1,15 @@
 #include "videowidget.h"
 #include <QMessageBox>
-#include <vlc/vlc.h>
-
-#define qtu(i) ((i).toUtf8().constData())
 
 #include <QtGui>
 #include <QVBoxLayout>
 VideoWidget::VideoWidget(QWidget *parent) : QWidget(parent)
 {
-    _vlcPlayer = nullptr;
+    //_vlcPlayer = nullptr;
 
     /* Initialize libVLC */
-    _vlcInstance = libvlc_new(0, nullptr);
-
+    //_vlcInstance.reset(libvlc_new(0, nullptr));
+    _vlcInstance.reset(libvlc_new(0, nullptr), &libvlc_release);
     /* Complain in case of broken installation */
     if (_vlcInstance == nullptr) {
         QMessageBox::critical(this, "Qt libVLC player", "Could not init libVLC");
@@ -27,7 +24,8 @@ VideoWidget::VideoWidget(QWidget *parent) : QWidget(parent)
 VideoWidget::~VideoWidget()
 {
     /* Release libVLC instance on quit */
-    if (_vlcInstance) libvlc_release(_vlcInstance);
+
+    if (_vlcInstance) libvlc_release(_vlcInstance.data());
 }
 
 void VideoWidget::initUI()
@@ -81,27 +79,27 @@ void VideoWidget::initUI()
 void VideoWidget::openFile(const QString &path)
 {
     /* Stop if something is playing */
-    if (_vlcPlayer && libvlc_media_player_is_playing(_vlcPlayer)) stop();
+    if (_vlcPlayer && libvlc_media_player_is_playing(_vlcPlayer.data())) stop();
 
     /* Create a new Media */
-    libvlc_media_t *vlcMedia = libvlc_media_new_path(_vlcInstance, qtu(path));
+    libvlc_media_t *vlcMedia = libvlc_media_new_path(_vlcInstance.data(), qtu(path));
     if (!vlcMedia) return;
 
     /* Create a new libvlc player */
-    _vlcPlayer = libvlc_media_player_new_from_media(vlcMedia);
+    _vlcPlayer.reset(libvlc_media_player_new_from_media(vlcMedia));
 
     /* Release the media */
     libvlc_media_release(vlcMedia);
 
     /* Integrate the video in the interface */
 #if defined(Q_OS_UNIX)
-    libvlc_media_player_set_xwindow(_vlcPlayer, _videoWidget->winId());
+    libvlc_media_player_set_xwindow(_vlcPlayer.data(), _videoWidget->winId());
 #elif defined(Q_OS_WIN)
     // libvlc_media_player_set_hwnd(_vlcPlayer, _videoWidget->winId());
 #endif
 
     /* And start playback */
-    libvlc_media_player_play(_vlcPlayer);
+    libvlc_media_player_play(_vlcPlayer.data());
 
     /* Update playback button */
     // playBut->setText("Pause");
@@ -111,13 +109,13 @@ void VideoWidget::play()
 {
     if (!_vlcPlayer) return;
 
-    if (libvlc_media_player_is_playing(_vlcPlayer)) {
+    if (libvlc_media_player_is_playing(_vlcPlayer.data())) {
         /* Pause */
-        libvlc_media_player_pause(_vlcPlayer);
+        libvlc_media_player_pause(_vlcPlayer.data());
         // playBut->setText("Play");
     } else {
         /* Play again */
-        libvlc_media_player_play(_vlcPlayer);
+        libvlc_media_player_play(_vlcPlayer.data());
         // playBut->setText("Pause");
     }
 }
@@ -125,7 +123,7 @@ void VideoWidget::play()
 int VideoWidget::changeVolume(int vol)
 { /* Called on volume slider change */
 
-    if (_vlcPlayer) return libvlc_audio_set_volume(_vlcPlayer, vol);
+    if (_vlcPlayer) return libvlc_audio_set_volume(_vlcPlayer.data(), vol);
 
     return 0;
 }
@@ -133,7 +131,7 @@ int VideoWidget::changeVolume(int vol)
 void VideoWidget::changePosition(int pos)
 { /* Called on position slider change */
 
-    if (_vlcPlayer) libvlc_media_player_set_position(_vlcPlayer, static_cast<float>(pos) / 1000.0f);
+    if (_vlcPlayer) libvlc_media_player_set_position(_vlcPlayer.data(), static_cast<float>(pos) / 1000.0f);
 }
 
 void VideoWidget::updateInterface()
@@ -142,24 +140,24 @@ void VideoWidget::updateInterface()
     if (!_vlcPlayer) return;
 
     /* update the timeline */
-    float pos = libvlc_media_player_get_position(_vlcPlayer);
+    float pos = libvlc_media_player_get_position(_vlcPlayer.data());
     _playbackSlider->setValue(static_cast<int>(pos * 1000.0f));
 
     /* Stop the media */
-    if (libvlc_media_player_get_state(_vlcPlayer) == libvlc_Ended) this->stop();
+    if (libvlc_media_player_get_state(_vlcPlayer.data()) == libvlc_Ended) this->stop();
 }
 
 void VideoWidget::stop()
 {
     if (_vlcPlayer) {
         /* stop the media player */
-        libvlc_media_player_stop(_vlcPlayer);
+        libvlc_media_player_stop(_vlcPlayer.data());
 
         /* release the media player */
-        libvlc_media_player_release(_vlcPlayer);
+        libvlc_media_player_release(_vlcPlayer.data());
 
         /* Reset application values */
-        _vlcPlayer = nullptr;
+        _vlcPlayer.reset();
         _playbackSlider->setValue(0);
         // playBut->setText("Play");
     }

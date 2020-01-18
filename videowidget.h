@@ -1,12 +1,18 @@
 #pragma once
 
 #include <QtGui>
-#include <vlc/vlc.h>
 #include <QPushButton>
 #include <QSlider>
 #include <QMainWindow>
 
 #include <QWidget>
+#include <QPointer>
+#include <vlc/vlc.h>
+#include <vlc/libvlc.h>
+#include <QScopedPointer>
+#include <QSharedPointer>
+
+#define qtu(i) ((i).toUtf8().constData())
 class VideoWidget : public QWidget {
 
     Q_OBJECT
@@ -37,8 +43,8 @@ private:
     QSlider *_playbackSlider;
     QWidget *_videoWidget;
 
-    libvlc_instance_t *_vlcInstance;
-    libvlc_media_player_t *_vlcPlayer;
+    QSharedPointer<libvlc_instance_t> _vlcInstance;
+    QSharedPointer<libvlc_media_player_t> _vlcPlayer;
 
     void initUI();
 };

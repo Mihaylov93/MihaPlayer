@@ -20,9 +20,6 @@ unix:LIBS +=  -lvlc -lX11
 unix:DEPENDPATH += .
 unix:INCLUDEPATH += .
 
-win32:LIBS += $$quote(C:/Program Files/VideoLAN/VLC/MinGW/sdk/lib/libvlc.lib)
-win32:INCLUDEPATH += $$quote(C:/Program Files/VideoLAN/VLC/MinGW/sdk/include)
-
 
 SOURCES += \
         filedialog.cpp \
