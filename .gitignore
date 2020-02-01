@@ -40,3 +40,11 @@ ui_*.h
 
 # Common
 MakeFile
+/.qmake.stash
+/x64/*
+/Makefile.Debug
+/Makefile.Release
+/*.vcxproj
+/*.vcxproj.*
+/debug/*
+/release/*
