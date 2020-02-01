@@ -31,7 +31,8 @@ MainWindow::~MainWindow()
 void MainWindow::playVideo(const QString &iPath)
 {
     _videoWidget->openFile(iPath);
-    // ui->stackedWidget->currentWidget()->clearFocus();
-    // ui->stackedWidget->currentWidget()->hide();
+    ui->stackedWidget->currentWidget()->clearFocus();
+    ui->stackedWidget->currentWidget()->hide();
     ui->stackedWidget->setCurrentWidget(_videoWidget);
+    ui->stackedWidget->currentWidget()->setFocus(Qt::ActiveWindowFocusReason);
 }

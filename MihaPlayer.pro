@@ -16,10 +16,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
-unix:LIBS +=  -lvlc -lX11
-unix:DEPENDPATH += .
-unix:INCLUDEPATH += .
-
 
 SOURCES += \
         filedialog.cpp \
@@ -34,8 +30,3 @@ HEADERS += \
 
 FORMS += \
         mainwindow.ui
-
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
