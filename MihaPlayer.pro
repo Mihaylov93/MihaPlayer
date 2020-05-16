@@ -1,22 +1,15 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2019-10-22T21:32:22
-
-#-------------------------------------------------
-
-QT       += core gui multimedia multimediawidgets
+QT       += core gui avwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = MihaPlayer
 TEMPLATE = app
 
-
 DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
-unix:LIBS +=  -lvlc -lX11
+unix:LIBS += -lX11
 unix:DEPENDPATH += .
 unix:INCLUDEPATH += .
 
@@ -28,9 +21,9 @@ SOURCES += \
         videowidget.cpp
 
 HEADERS += \
-        filedialog.h \
-        mainwindow.h \
-        videowidget.h
+        filedialog.hpp \
+        mainwindow.hpp \
+        videowidget.hpp
 
 FORMS += \
         mainwindow.ui

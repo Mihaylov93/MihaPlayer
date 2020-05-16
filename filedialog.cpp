@@ -1,4 +1,4 @@
-#include "filedialog.h"
+#include "filedialog.hpp"
 
 #include <QFileIconProvider>
 #include <QSizePolicy>
@@ -9,13 +9,12 @@
 #include <QPushButton>
 #include <QMimeDatabase>
 
-#define DEBUG_FILEDIALOG 0
-
 FileDialog::FileDialog(QWidget *parent) : QWidget(parent)
 {
-    this->setFixedSize(310, 230);
+    // this->setFixedSize(320/*298*/, 220);
+    this->setGeometry(0, 0, 320, 240);
     this->setWindowFlags(Qt::FramelessWindowHint);
-    this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mPath.setText(QDir::homePath());
     mPath.setFocusPolicy(Qt::NoFocus);
     mFSModel.setRootPath(QDir::homePath());
@@ -27,6 +26,7 @@ FileDialog::FileDialog(QWidget *parent) : QWidget(parent)
     if (rootIndex.isValid()) mTreeView.setRootIndex(rootIndex);
     mLayout = new QVBoxLayout(this);
     mLayout->setMargin(1);
+    //->setContentsMargins(0, 0, 0, 0);
     mLayout->addWidget(&mPath);
     mLayout->addWidget(&mTreeView);
 
@@ -123,11 +123,7 @@ void FileDialog::checkFilePath(const QString &path)
     } else if (file.isFile() && file.exists()) {
         QString mimeType = QMimeDatabase().mimeTypeForFile(file).name();
         if (mimeType.contains("video")) {
-#if DEBUG_FILEDIALOG
-            showPopup(mFSModel.filePath(mTreeView.currentIndex()).append(" is a Video."), QMessageBox::Ok);
-#else
             emit openVideo(path);
-#endif
         } else {
             showPopup(mFSModel.filePath(mTreeView.currentIndex()).append(" File is not a video."), QMessageBox::Ok);
         }

@@ -7,12 +7,12 @@
 
 #include <QWidget>
 #include <QPointer>
-#include <vlc/vlc.h>
-#include <vlc/libvlc.h>
 #include <QScopedPointer>
 #include <QSharedPointer>
 
-#define qtu(i) ((i).toUtf8().constData())
+#include <QtAV>
+#include <QtAVWidgets>
+
 class VideoWidget : public QWidget {
 
     Q_OBJECT
@@ -25,26 +25,18 @@ public slots:
     void openFile(const QString &path);
 
 private slots:
-    void play();
-    void stop();
-    void mute();
-    void fullscreen();
-
-    int changeVolume(int);
-    void changePosition(int);
-    void updateInterface();
+    void playPause();
 
 protected:
     void closeEvent(QCloseEvent *) override;
 
 private:
     // QPushButton *playBut;
-    QSlider *_volumeSlider;
-    QSlider *_playbackSlider;
+    // QSlider *_volumeSlider;
+    // QSlider *_playbackSlider;
     QWidget *_videoWidget;
+    QString _videoPath;
 
-    QSharedPointer<libvlc_instance_t> _vlcInstance;
-    QSharedPointer<libvlc_media_player_t> _vlcPlayer;
-
-    void initUI();
+    QtAV::AVPlayer *_player;
+    QtAV::VideoOutput *_videoOutput;
 };

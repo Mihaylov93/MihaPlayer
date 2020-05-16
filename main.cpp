@@ -1,8 +1,5 @@
-#include "mainwindow.h"
+#include "mainwindow.hpp"
 #include <QApplication>
-
-#include <QMediaPlayer>
-#include <QVideoWidget>
 
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
